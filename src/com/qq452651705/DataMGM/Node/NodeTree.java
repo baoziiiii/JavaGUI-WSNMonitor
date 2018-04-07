@@ -270,6 +270,11 @@ public class NodeTree {
             fields.add(KEY_NODE_PARENT);
             return fields;
         }
+
+        @Override
+        public Bean getCopy() {
+            return new Node(this.toTable());
+        }
     }
 
     public static class SinkNode extends Node implements Bean {
@@ -361,6 +366,11 @@ public class NodeTree {
             fields.add(KEY_SINK_DETAIL);
             fields.add(KEY_SINK_ADDRESS);
             return fields;
+        }
+
+        @Override
+        public Bean getCopy() {
+            return new SinkNode(this.toTable());
         }
     }
 }

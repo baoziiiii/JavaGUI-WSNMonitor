@@ -7,4 +7,5 @@ public interface Bean {
     List<String> getFieldNames();
     void setFields(Map<String,Object> map);
     Map<String,Object> toTable();
+    Bean getCopy();
 }

@@ -6,7 +6,6 @@ import com.qq452651705.DataMGM.Node.NodeManager;
 import com.qq452651705.DataMGM.Node.NodeTree;
 import com.qq452651705.Utils.ExcelUtils;
 import com.qq452651705.Utils.TxtUtils;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
@@ -21,7 +20,6 @@ import javax.swing.tree.TreeNode;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -253,7 +251,7 @@ public class MainActivity {
                         }
                         nodeControl.setBorder(BorderFactory.createTitledBorder("当前选中节点：" + selectedNodeName));
                         SwingUtilities.invokeLater(() -> nodeControl.updateUI());
-//                    myTable.setBean(nodeTree.searchNode(selectionNode.getParent(),selectionNode));
+//                      myTable.addBean(nodeTree.searchNode(selectionNode.getParent(),selectionNode));
                         nodeTree.updateUI();
                     }
             );
@@ -324,7 +322,7 @@ public class MainActivity {
                 super(owner, title, true);
                 setLayout(new FlowLayout());
                 MyTable table = new MyTable();
-                table.setBean(node);
+                table.addBean(node);
                 JTable t = new MyJTable(table);
                 t.setPreferredScrollableViewportSize(new Dimension(550, 100));
                 t.getModel().addTableModelListener(e -> changed_flag = true);
@@ -366,7 +364,7 @@ public class MainActivity {
                 JButton cancel_button = new JButton("还原修改");
                 cancel_button.addActionListener(e -> {
                     table.clearList();
-                    table.setBean(node);
+                    table.addBean(node);
                     javax.swing.SwingUtilities.invokeLater(() -> t.updateUI());
                     changed_flag = true;
                 });
@@ -397,11 +395,11 @@ public class MainActivity {
                 Integer Level = selectionNode.getLevel();
 
                 if (Level == 0) {
-                    table.setBean(SinkNode.emptyBean());
+                    table.addBean(SinkNode.emptyBean());
                 } else if (Level == 1) {
                     Node node = Node.emptyBean();
                     node.setParent(selectionNode.toString());
-                    table.setBean(node);
+                    table.addBean(node);
                 }
                 JTable t = new MyJTable(table);
                 t.setPreferredScrollableViewportSize(new Dimension(550, 100));
@@ -424,7 +422,7 @@ public class MainActivity {
                         newnode.setParent(selectionNode.toString());
                         nodeTree.addNode(selectionNode, newnode);
                         table.clearList();
-                        table.setBean(newnode);
+                        table.addBean(newnode);
                         SwingUtilities.invokeLater(() -> t.updateUI());
                     }
                     nodeTree.updateUI();
@@ -471,6 +469,7 @@ public class MainActivity {
     private JButton 自动缓存Button;
     private JPanel touristTablePanel;
     private JButton 导出游客信息Button;
+    private JButton 清空游客列表Button;
     private ChartPanel chartPanel;
     private RealTimeChart realTimeChart;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1053,6 +1052,7 @@ public class MainActivity {
 
     class TouristTab{
           TouristTab(){
+             MyTable touristTable=new MyTable();
 
           }
     }
