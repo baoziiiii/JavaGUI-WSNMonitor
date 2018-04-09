@@ -242,6 +242,10 @@ public class NodeTree {
             getNodeManager().addNewData(parent,name,timestamp,value);
         }
 
+        public void clearData(){
+            getNodeManager().clearNodeData(this);
+        }
+
         @Override
         public Map<String, Object> toTable() {
             Map<String, Object> map = new HashMap<>();

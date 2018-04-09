@@ -64,7 +64,8 @@ public class NodeManager {
             primaryKey.add(KEY_NODE_PARENT);
             primaryKey.add(KEY_NODE_NAME);
             myDatabase.createTable(TABLE_NODE, name_type_map, primaryKey, null);
-        }catch (MySQLException e){}
+        }catch (MySQLException e){
+        }
 
         try {
             name_type_map.clear();
@@ -234,6 +235,22 @@ public class NodeManager {
         } catch (MySQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void clearAllData(){
+        try {
+            myDatabase.clearTable(TABLE_DATA);
+        } catch (MySQLException e) {
+            System.out.println(e.print());
+        }
+    }
+
+    public void clearNodeData(Node node){
+        try {
+            myDatabase.deleteRow(TABLE_DATA,KEY_NODE_NAME+" = \'"+node.name+"\'");
+        } catch (MySQLException e) {
+            System.out.println(e.print());
         }
     }
 

@@ -1,5 +1,7 @@
 package com.qq452651705.GUI;
 
+import com.qq452651705.DataMGM.Tourists.TouristManager;
+import com.qq452651705.SerialComm.CommHandler;
 import com.qq452651705.SerialComm.SerialComm;
 import com.qq452651705.DataMGM.Account.AccountManager;
 import com.qq452651705.DataMGM.Node.NodeManager;
@@ -28,12 +30,17 @@ import java.util.List;
 
 import com.qq452651705.DataMGM.Node.NodeTree.SinkNode;
 import com.qq452651705.DataMGM.Node.NodeTree.Node;
+import com.qq452651705.DataMGM.Tourists.TouristManager.Tourist;
 
 public class MainActivity {
 
     private SerialPort comm;
 
     private JTabbedPane tabbedPane1;
+    private NodeTab nodeTab;
+    private CommTab commTab;
+    private TouristTab touristTab;
+
     private JTree tree1;
     private JButton 查看节点信息Button;
     private JButton 添加子节点Button;
@@ -45,7 +52,8 @@ public class MainActivity {
 
     private AccountManager accountManager = AccountManager.getAccountManager();
     private NodeManager nodeManager = NodeManager.getNodeManager();
-    NodeTree nodeTree = new NodeTree(tree1);
+    private TouristManager touristManager=TouristManager.getTouristManager();
+    private NodeTree nodeTree = new NodeTree(tree1);
 
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -180,8 +188,9 @@ public class MainActivity {
         accountMenu.add(logout);
 
 
-        NodeTab nodeTab = new NodeTab();
-        CommTab commTab = new CommTab();
+        nodeTab = new NodeTab();
+        commTab = new CommTab();
+        touristTab=new TouristTab();
 
         tabbedPane1.addChangeListener((l) ->
 
@@ -547,8 +556,10 @@ public class MainActivity {
                         autoSaveLineBuffer=new StringBuffer();
                     } catch (IOException e) {
                         e.printStackTrace();
+                    }catch (NullPointerException e){}
+                    finally {
+                        串口Button.setText("打开串口");
                     }
-                    串口Button.setText("打开串口");
                 } else {
                     if (selectedPort == null) {
                         JOptionPane.showConfirmDialog(frame, "无可用串口", "串口",
@@ -1000,10 +1011,16 @@ public class MainActivity {
                                         byte[] bytes = null;
                                         try {
                                             bytes = serialComm.readFromPort(comm);
+
                                         } catch (Exception e) {
                                             commSwitch = false;
                                             JOptionPane.showConfirmDialog(frame, "串口连接断开！", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
                                             串口Button.doClick();
+                                        }
+                                        try {
+                                            if (CommHandler.parseRawData(bytes,comm));
+                                        }catch (Exception e){
+                                            e.printStackTrace();
                                         }
                                         if (bytes != null) {
                                             String temp = sdf.format(new Date())+"  "+comm.getName() + "<<" +new String(bytes)+ "\r\n";
@@ -1052,8 +1069,11 @@ public class MainActivity {
 
     class TouristTab{
           TouristTab(){
-             MyTable touristTable=new MyTable();
-
+              touristTablePanel.setLayout(new BorderLayout());
+              JTable t = new JTable(touristManager.getMyTable());
+              // 将表格加入到滚动条组件中
+              JScrollPane scrollPane = new JScrollPane(t);
+              touristTablePanel.add(scrollPane,BorderLayout.CENTER);
           }
     }
 }

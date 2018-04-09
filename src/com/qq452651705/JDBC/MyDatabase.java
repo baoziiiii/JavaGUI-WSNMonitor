@@ -2,8 +2,11 @@ package com.qq452651705.JDBC;
 
 import com.qq452651705.JDBC.Exception.MySQLException;
 import com.mysql.jdbc.Connection;
+import com.sun.javafx.binding.StringFormatter;
+import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +28,7 @@ public class MyDatabase {
     public static final String TYPE_DOUBLE = "DOUBLE";
     public static final String TYPE_DATE = "DATE";
     public static final String TYPE_TIME = "TIME";
+    public static final String TYPE_DATETIME="DATETIME";
     public static final String TYPE_TIMESTAMP = "TIMESTAMP";
     public static final String TYPE_VARCHAR = "VARCHAR(255)";
 
@@ -56,7 +60,9 @@ public class MyDatabase {
     private PreparedStatement ps;
 
 
-
+    public static String dateTimeFormmatter(java.util.Date date){
+       return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    }
 
     private Connection getConnection() throws SQLException {
         return (Connection) DriverManager.getConnection(url + db + "?useSSL=false", usrname, password);
@@ -169,7 +175,6 @@ public class MyDatabase {
             ps.close();
             conn.close();
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new MySQLException(MySQLException.TB_INSERT_FAIL, "Failed to insert row into " + tbName);
         }
     }

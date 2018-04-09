@@ -8,26 +8,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyTable extends AbstractTableModel {
+public class MyTable<T extends Bean> extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
 
-    private List<Bean> list=new ArrayList<>();
+    private List<T> list=new ArrayList<>();
     private List<String> title ;
 
-    public void addBean(Bean t){
-        if(t==null) return;
-        title=t.getFieldNames();
-        list.add(t.getCopy());
+    public MyTable(){
+        super();
+    }
+
+    public MyTable(List<String> title,List<T> list){
+        super();
+        this.list=list;
+        this.title=title;
     }
 
     public void setString(List<String> n){
         this.title =n;
     }
-
-    public void setList(List<Bean> list) {
+    public void setList(List<T> list) {
         this.list = list;
     }
+
+    public void addBean(T t){
+        if(t==null) return;
+        title=t.getFieldNames();
+        list.add((T)t.getCopy());
+    }
+
 
     public void clearList(){
         list=new ArrayList<>();
