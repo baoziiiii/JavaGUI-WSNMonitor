@@ -23,7 +23,6 @@ public class MainFrame {
             Image icon = new ImageIcon("timg.jpg").getImage();
             frame.setIconImage(icon);
 
-
             frame.setVisible(true);
             LoginActivity loginActivity = new LoginActivity(frame);
         });

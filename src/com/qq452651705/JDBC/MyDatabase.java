@@ -7,6 +7,7 @@ import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,13 @@ public class MyDatabase {
        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
+    public static String timestampFormmatter(Timestamp timestamp){
+        if(timestamp==null)
+            return "";
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp.getTime()));
+    }
+
+
     private Connection getConnection() throws SQLException {
         return (Connection) DriverManager.getConnection(url + db + "?useSSL=false", usrname, password);
     }
@@ -76,6 +84,7 @@ public class MyDatabase {
             ps.close();
             conn.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new MySQLException(MySQLException.DB_CREATE_FAIL, "Failed to create " + dbName);
         }
     }
@@ -101,6 +110,7 @@ public class MyDatabase {
             conn.close();
             this.db = dbName;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new MySQLException(MySQLException.DB_OPEN_FAIL, "Failed to open " + dbName);
         }
     }
@@ -131,7 +141,7 @@ public class MyDatabase {
             ps.close();
             conn.close();
         } catch (SQLException e) {
-            throw new MySQLException(MySQLException.TB_OPEN_FAIL, "Failed to create " + tbName);
+            throw new MySQLException(MySQLException.TB_OPEN_FAIL, "Failed to create " + tbName+".Possibly already existed.");
         }
     }
 
@@ -175,6 +185,7 @@ public class MyDatabase {
             ps.close();
             conn.close();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new MySQLException(MySQLException.TB_INSERT_FAIL, "Failed to insert row into " + tbName);
         }
     }
@@ -253,6 +264,7 @@ public class MyDatabase {
             e.printStackTrace();
               throw new MySQLException(MySQLException.TB_QUERY_FAIL, "Failed to execute query:" + sql );
         }
+
     }
 
     public void close(){

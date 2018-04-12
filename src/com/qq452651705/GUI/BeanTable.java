@@ -8,18 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyTable<T extends Bean> extends AbstractTableModel {
+public class BeanTable<T extends Bean> extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
 
     private List<T> list=new ArrayList<>();
     private List<String> title ;
 
-    public MyTable(){
+    public BeanTable(){
         super();
     }
 
-    public MyTable(List<String> title,List<T> list){
+    public BeanTable(List<String> title, List<T> list){
         super();
         this.list=list;
         this.title=title;
@@ -36,6 +36,10 @@ public class MyTable<T extends Bean> extends AbstractTableModel {
         if(t==null) return;
         title=t.getFieldNames();
         list.add((T)t.getCopy());
+    }
+
+    public int getTitleCol(String t){
+        return title.indexOf(t);
     }
 
 

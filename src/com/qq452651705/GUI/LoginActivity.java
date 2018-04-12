@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
 
 public class LoginActivity {
@@ -14,11 +16,15 @@ public class LoginActivity {
     private AccountManager accountManager = AccountManager.getAccountManager();
 
     private JPanel panel1;
-    private JTextField textField1;
-    private JPasswordField passwordField1;
+    private JTextField login_username;
+    private JPasswordField login_pswd;
     private JButton 注册Button;
     private JButton 登陆Button;
-    private JMenuBar menuBar;
+    private JTextField register_username;
+    private JPasswordField register_pswd;
+    private JPasswordField register_pswd_confirm;
+    private JButton register_commit;
+
 
     public LoginActivity(JFrame frame) {
         this.frame = frame;
@@ -100,20 +106,20 @@ public class LoginActivity {
                 JPanel panel = new JPanel();
                 panel.setLayout(new GridLayout(4, 2));
                 panel.add(new JLabel("用户名: "));
-                JTextField usernameField = new JTextField();
-                panel.add(usernameField);
-                JPasswordField passwordField = new JPasswordField();
-                JPasswordField passwordField2 = new JPasswordField();
+                register_username = new JTextField();
+                register_pswd = new JPasswordField();
+                register_pswd_confirm = new JPasswordField();
+                panel.add(register_username);
                 panel.add(new JLabel("密码:"));
-                panel.add(passwordField);
+                panel.add(register_pswd);
                 panel.add(new JLabel("确认密码:"));
-                panel.add(passwordField2);
+                panel.add(register_pswd_confirm);
 
-                JButton button = new JButton("确认");
-                button.addActionListener(event -> {
-                    String username = usernameField.getText();
-                    String password = new String(passwordField.getPassword());
-                    String confirmPassword = new String(passwordField2.getPassword());
+                register_commit = new JButton("确认");
+                register_commit.addActionListener(event -> {
+                    String username = register_username.getText();
+                    String password = new String(register_pswd.getPassword());
+                    String confirmPassword = new String(register_pswd_confirm.getPassword());
                     String msg = null;
                     Boolean flag = false;
                     if (password.equals("") || confirmPassword.equals("")) {
@@ -142,7 +148,7 @@ public class LoginActivity {
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
                     }
                 });
-                panel.add(button);
+                panel.add(register_commit);
                 add(panel);
                 pack();
             }
@@ -158,8 +164,8 @@ public class LoginActivity {
 
         @Override
         public void actionPerformed(ActionEvent event) {
-            String username = textField1.getText();
-            char[] password = passwordField1.getPassword();
+            String username = login_username.getText();
+            char[] password = login_pswd.getPassword();
             Boolean result = accountManager.login(username, new String(password));
             String msg;
             if (result) {
@@ -185,6 +191,16 @@ public class LoginActivity {
             // 将表格加入到滚动条组件中
             JScrollPane scrollPane = new JScrollPane(t);
             add(scrollPane, BorderLayout.CENTER);
+            JButton deletebutton=new JButton("清空");
+            deletebutton.addActionListener((l)->{
+                int selection=JOptionPane.showConfirmDialog(frame,"是否清空所有用户？","账户管理",JOptionPane.OK_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
+                if(selection==JOptionPane.OK_OPTION){
+                    accountManager.deleteAllAccounts();
+                    JOptionPane.showConfirmDialog(frame,"清空成功！","账号管理",JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE);
+                }
+                dispose();
+            });
+            add(deletebutton,BorderLayout.SOUTH);
             pack();
         }
 

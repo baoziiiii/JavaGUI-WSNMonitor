@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class ExcelUtils {
+public class ExcelUtils<T extends Bean> {
 
     private String path;
     private HSSFWorkbook wb;
@@ -52,27 +52,31 @@ public class ExcelUtils {
         writeToFile();
     }
 
-    public void beansToExcel(List<Bean> beans)throws IOException{
-        if(beans==null||beans.size()==0)return;
+    public void beansToExcel(Map<String,List<T>> map)throws IOException{
+        for(Map.Entry<String,List<T>> entry:map.entrySet()) {
+            String sheetName=entry.getKey();
+            List<T> beans=entry.getValue();
+            if (beans == null || beans.size() == 0) continue;
 
-        List<String> fieldNames=beans.get(0).getFieldNames();
+            List<String> fieldNames = beans.get(0).getFieldNames();
 
 //创建HSSFSheet对象
-        HSSFSheet sheet = wb.createSheet("sheet0");
+            HSSFSheet sheet = wb.createSheet(sheetName);
 //创建HSSFRow对象
-        HSSFRow titles = sheet.createRow(0);
-        int columnIndex=0;
-        for (String field:fieldNames) {
-            titles.createCell(columnIndex++).setCellValue(field);
-        }
+            HSSFRow titles = sheet.createRow(0);
+            int columnIndex = 0;
+            for (String field : fieldNames) {
+                titles.createCell(columnIndex++).setCellValue(field);
+            }
 
-        int rowIndex=1;
-        for (Bean bean:beans) {
-             HSSFRow row=sheet.createRow(rowIndex);
-            Map<String,Object> fieldMap=bean.toTable();
-            columnIndex=0;
-            for (String field:fieldNames) {
-                 row.createCell(columnIndex).setCellValue(fieldMap.get(field).toString());
+            int rowIndex = 1;
+            for (Bean bean : beans) {
+                HSSFRow row = sheet.createRow(rowIndex++);
+                Map<String, Object> fieldMap = bean.toTable();
+                columnIndex = 0;
+                for (String field : fieldNames) {
+                    row.createCell(columnIndex++).setCellValue(fieldMap.get(field).toString());
+                }
             }
         }
         writeToFile();
