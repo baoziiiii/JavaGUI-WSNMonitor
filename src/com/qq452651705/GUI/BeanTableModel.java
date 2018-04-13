@@ -1,7 +1,6 @@
 package com.qq452651705.GUI;
 
 import com.qq452651705.Utils.TBean;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
