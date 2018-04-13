@@ -42,7 +42,6 @@ public class NodeManager {
 
 
     /**
-     * The constant TABLE_SINK.
      * 表1: Sink节点表
      * -------主键-----------------------
      * 列:  Sink地址  Sink名称  Sink信息
@@ -66,7 +65,6 @@ public class NodeManager {
 
 
     /**
-     * The constant TABLE_NODE.
      * 表2: 传感器节点表
      * -------主键--------主键-------------------------
      * 列:  传感器地址  父Sink地址  传感器名称  监测值单位
@@ -93,7 +91,6 @@ public class NodeManager {
 
 
     /**
-     * The constant TABLE_DATA.
      * 表3: 传感器数据表
      * -------主键--------主键-------------------------
      * 列:  传感器地址  父Sink地址    时刻   值
@@ -342,19 +339,19 @@ public class NodeManager {
     /**
      * Update node.  更新传感器节点信息
      *
-     * @param parent   the parent address  父Sink节点地址
      * @param oldnode  the oldnode    旧传感器节点
-     * @param newnode  the newnode    新传感器节点(地址必须一样)
-     * @return the boolean   false:通常因为地址不一样或地址错误
+     * @param newnode  the newnode    新传感器节点
+     * @return the boolean
      */
-    public Boolean updateNode(String parent, Node oldnode, Node newnode) {
+    public Boolean updateNode(Node oldnode, Node newnode) {
         try {
-            String where = KEY_NODE_ADDRESS + " = \'" + oldnode.address + "\' AND " + KEY_NODE_PARENT + " = \'" + parent+"\'";
+            String where = KEY_NODE_ADDRESS + " = \'" + oldnode.address + "\' AND " + KEY_NODE_PARENT + " = \'" + oldnode.parent+"\'";
             Map<String, Object> map = new HashMap<>();
             map.put(KEY_NODE_ADDRESS, newnode.address);
             map.put(KEY_NODE_PARENT,newnode.parent);
             myDatabase.updateRow(TABLE_DATA, map, where);
             map.put(KEY_NODE_DETAIL,newnode.detail);
+            map.put(KEY_NODE_NAME,newnode.name);
             myDatabase.updateRow(TABLE_NODE, map, where);
             return true;
         } catch (MySQLException e) {

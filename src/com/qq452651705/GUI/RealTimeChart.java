@@ -14,18 +14,34 @@ import org.jfree.data.time.TimeSeriesCollection;
 import javax.swing.*;
 import java.util.Date;
 
+/**
+ * The type Real time chart.  图表类
+ */
 public class RealTimeChart {
-    private final Integer maximumItemCount=100;
-    private TimeSeries timeSeries;
+
+    private JFreeChart jfreechart;    //图表GUI组件
+    private TimeSeriesCollection timeSeriesCollection; //数据集包装
+    private TimeSeries timeSeries;    //数据集
+    private ChartPanel chartPanel;    //图表显示容器
+
     private long value = 0;
     private String chartContent;
     private String title;
     private String yaxisName;
 
-    private TimeSeriesCollection timeSeriesCollection;
-    private ChartPanel chartPanel;
-    private JFreeChart jfreechart;
 
+    private final Integer maximumItemCount=100; //数据集最大缓存数量,防止内存溢出
+
+
+
+    /**
+     * Instantiates a new Real time chart. 初始化图表
+     *
+     * @param chartContent the chart content  图例
+     * @param title        the title          图表标题
+     * @param yaxisName    the yaxis name     y轴名称
+     * @param ts           the ts             数据集
+     */
     public RealTimeChart(String chartContent, String title, String yaxisName,TimeSeries ts) {
         this.chartContent=chartContent;
         this.title=title;
@@ -46,6 +62,12 @@ public class RealTimeChart {
         chartPanel = new ChartPanel(jfreechart);
     }
 
+    /**
+     * Set x range.  设定X轴显示范围
+     *
+     * @param lower the lower  下限
+     * @param upper the upper  上限
+     */
     public void setXRange(double lower,double upper){
         XYPlot xyPlot=chartPanel.getChart().getXYPlot();
         ValueAxis valueAxis=xyPlot.getDomainAxis();
@@ -54,6 +76,9 @@ public class RealTimeChart {
         SwingUtilities.invokeLater(()->chartPanel.updateUI());
     }
 
+    /**
+     * Reset x range.   重置X轴显示范围为30s
+     */
     public void resetXRange(){
         XYPlot xyPlot=chartPanel.getChart().getXYPlot();
         ValueAxis valueAxis=xyPlot.getDomainAxis();
@@ -62,18 +87,39 @@ public class RealTimeChart {
         SwingUtilities.invokeLater(()->chartPanel.updateUI());
     }
 
+    /**
+     * Add new data.     向数据集中添加新数据
+     *
+     * @param date  the date   x轴时间
+     * @param value the value  y轴值
+     */
     public void addNewData(Date date, Float value){
         timeSeries.add(new Millisecond(date),value);
     }
 
+    /**
+     * Gets time series.   获取图表数据集
+     *
+     * @return the time series
+     */
     public TimeSeries getTimeSeries() {
         return timeSeries;
     }
 
+    /**
+     * Gets chart panel.   获取图表显示容器
+     *
+     * @return the chart panel
+     */
     public ChartPanel getChartPanel() {
         return chartPanel;
     }
 
+    /**
+     * Gets jfreechart.   获取图表组件
+     *
+     * @return the jfreechart
+     */
     public JFreeChart getJfreechart() {
         return jfreechart;
     }

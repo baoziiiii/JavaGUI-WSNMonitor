@@ -6,44 +6,69 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.List;
 
+/**
+ * The type Login activity.  登陆界面
+ */
 public class LoginActivity {
 
-    private JFrame frame;
+
+    /**
+     * @param accountManager 账号管理类实例
+     */
     private AccountManager accountManager = AccountManager.getAccountManager();
 
+
+    /**************************GUI组件******************************/
+    private JFrame frame;
     private JPanel panel1;
     private JTextField login_username;
     private JPasswordField login_pswd;
     private JButton 注册Button;
     private JButton 登陆Button;
+    private JPanel loginPanel;
     private JTextField register_username;
     private JPasswordField register_pswd;
     private JPasswordField register_pswd_confirm;
     private JButton register_commit;
+    /**************************GUI组件******************************/
 
 
+    /**
+     * Instantiates a new Login activity. 初始化登陆界面
+     *
+     * @param frame the frame    主窗口
+     */
     public LoginActivity(JFrame frame) {
         this.frame = frame;
-        frame.setContentPane(panel1);
+        frame.setContentPane(loginPanel);
         initButton();
         initMenuBar();
-        SwingUtilities.invokeLater(()->panel1.updateUI());
+        frame.pack();
+        SwingUtilities.invokeLater(()->loginPanel.updateUI());
     }
 
-
+    /**
+     * Instantiates menu bar. 初始化菜单栏
+     */
     private void initMenuBar() {
+
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
+
+        /**
+         * 文件菜单
+         */
         JMenu fileMenu = new JMenu("文件");
         menuBar.add(fileMenu);
         JMenuItem closeItem = new JMenuItem("关闭");
         closeItem.addActionListener(e -> System.exit(0));
         fileMenu.add(closeItem);
 
+        /**
+         * 配置菜单
+         */
         JMenu configMenu = new JMenu("配置");
         menuBar.add(configMenu);
         JMenu styleMenu = new JMenu("主题");
@@ -68,30 +93,44 @@ public class LoginActivity {
         }
         configMenu.add(styleMenu);
 
+        /**
+         * 账号菜单
+         */
         JMenu accountMenu = new JMenu("账号");
         menuBar.add(accountMenu);
         JMenuItem registerItem = new JMenuItem("注册");
         JMenuItem forgetItem = new JMenuItem("找回密码");
         registerItem.addActionListener(new RegisterAction());
         forgetItem.addActionListener(new ForgetAction());
-
         accountMenu.add(registerItem);
         accountMenu.add(forgetItem);
-
     }
 
 
+    /**
+     * Instantiates menu bar. 初始化按键
+     *
+     */
     private void initButton() {
         注册Button.addActionListener(new RegisterAction());
         登陆Button.addActionListener(new LoginAction());
     }
 
+    /**
+     * The type Register action. 注册触发类.实现注册操作的响应
+     */
     class RegisterAction extends AbstractAction {
 
+        /**
+         * Instantiates a new Register action.
+         */
         public RegisterAction() {
             putValue(Action.NAME, "注册");
         }
 
+        /**
+         * Instantiates a new Register action. 弹出一个注册窗口框
+         */
         @Override
         public void actionPerformed(ActionEvent event) {
             JDialog dialog = new RegisterDialog(frame);
@@ -100,8 +139,17 @@ public class LoginActivity {
             dialog.setVisible(true);
         }
 
+        /**
+         * The type Register dialog.  注册窗口框实现
+         */
         class RegisterDialog extends JDialog {
+            /**
+             * Instantiates a new Register dialog. 初始化注册窗口框
+             *
+             * @param owner the owner   父窗口
+             */
             public RegisterDialog(JFrame owner) {
+
                 super(owner, "注册", true);
                 JPanel panel = new JPanel();
                 panel.setLayout(new GridLayout(4, 2));
@@ -117,11 +165,16 @@ public class LoginActivity {
 
                 register_commit = new JButton("确认");
                 register_commit.addActionListener(event -> {
+
+                    /**
+                     *   注册提交操作实现
+                     */
+
                     String username = register_username.getText();
                     String password = new String(register_pswd.getPassword());
                     String confirmPassword = new String(register_pswd_confirm.getPassword());
-                    String msg = null;
-                    Boolean flag = false;
+                    String msg ;
+                    Boolean flag ;
                     if (password.equals("") || confirmPassword.equals("")) {
                         msg = "密码不能为空！";
                         flag = false;
@@ -156,18 +209,28 @@ public class LoginActivity {
     }
 
 
+    /**
+     * The type Login action. 登陆触发类.实现登陆操作的响应
+     */
     class LoginAction extends AbstractAction {
 
+        /**
+         * Instantiates a new Login action.
+         */
         public LoginAction() {
             putValue(Action.NAME, "登陆");
         }
 
         @Override
         public void actionPerformed(ActionEvent event) {
+
             String username = login_username.getText();
             char[] password = login_pswd.getPassword();
+
+            /**
+             *   登陆成功则加载主界面MainActivity
+             */
             Boolean result = accountManager.login(username, new String(password));
-            String msg;
             if (result) {
                 javax.swing.SwingUtilities.invokeLater(()-> {
                     MainActivity mainActivity = new MainActivity(frame);
@@ -181,14 +244,67 @@ public class LoginActivity {
         }
     }
 
+    /**
+     * The type Forget action.  找回密码触发类
+     */
+    class ForgetAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            JDialog dialog = new ForgetDialog(frame);
+            dialog.setVisible(true);
+        }
+
+        /**
+         * The type Forget dialog.  找回密码窗口.
+         */
+        class ForgetDialog extends JDialog {
+            /**
+             * Instantiates a new Forget dialog.
+             *
+             * @param owner the owner
+             */
+            public ForgetDialog(JFrame owner) {
+                super(owner, "找回密码", true);
+                JPanel panel = new JPanel();
+                panel.setLayout(new GridLayout(2, 2));
+                panel.add(new JLabel("输入管理员密钥: "));
+                JTextField rootField = new JTextField();
+                panel.add(rootField);
+                JButton button = new JButton("确定");
+                button.addActionListener(e -> {
+                    if ("452651705".equals(rootField.getText())) {
+                        dispose();
+                        JDialog dialog = new AccountListDialog(frame);
+                        dialog.setVisible(true);
+                    } else {
+                        JOptionPane.showConfirmDialog(frame, "密钥错误，请联系管理员。", "找回密码",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+                panel.add(button);
+                add(panel);
+                pack();
+            }
+        }
+    }
+
+    /**
+     * The type Account list dialog.   客户账号信息窗口
+     */
     class AccountListDialog extends JDialog {
+
+        /**
+         * Instantiates a new Account list dialog.
+         *
+         * @param owner the owner
+         */
         public AccountListDialog(JFrame owner) {
+
             super(owner, "找回密码", true);
             AccountTable at = new AccountTable();
             at.setList(accountManager.getAllAccounts());
             JTable t = new JTable(at);
             t.setPreferredScrollableViewportSize(new Dimension(550, 100));
-            // 将表格加入到滚动条组件中
             JScrollPane scrollPane = new JScrollPane(t);
             add(scrollPane, BorderLayout.CENTER);
             JButton deletebutton=new JButton("清空");
@@ -204,13 +320,20 @@ public class LoginActivity {
             pack();
         }
 
+        /**
+         * The type Account table. 账户信息表格
+         */
         class AccountTable extends AbstractTableModel {
-            private static final long serialVersionUID = 1L;
 
             private List<Object[]> list;
 
             String[] n = {"用户名", "密码"};
 
+            /**
+             * Sets list.
+             *
+             * @param list the list
+             */
             public void setList(List<Object[]> list) {
                 this.list = list;
             }
@@ -244,40 +367,6 @@ public class LoginActivity {
             public void setValueAt(Object value, int rowIndex, int columnIndex) {
                 list.get(rowIndex)[columnIndex] = value;
                 fireTableCellUpdated(rowIndex, columnIndex);
-            }
-        }
-    }
-
-    class ForgetAction extends AbstractAction {
-        @Override
-        public void actionPerformed(ActionEvent event) {
-
-            JDialog dialog = new ForgetDialog(frame);
-            dialog.setVisible(true);
-        }
-
-        class ForgetDialog extends JDialog {
-            public ForgetDialog(JFrame owner) {
-                super(owner, "找回密码", true);
-                JPanel panel = new JPanel();
-                panel.setLayout(new GridLayout(2, 2));
-                panel.add(new JLabel("输入管理员密钥: "));
-                JTextField rootField = new JTextField();
-                panel.add(rootField);
-                JButton button = new JButton("确定");
-                button.addActionListener(e -> {
-                    if ("452651705".equals(rootField.getText())) {
-                        dispose();
-                        JDialog dialog = new AccountListDialog(frame);
-                        dialog.setVisible(true);
-                    } else {
-                        JOptionPane.showConfirmDialog(frame, "密钥错误，请联系管理员。", "找回密码",
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
-                    }
-                });
-                panel.add(button);
-                add(panel);
-                pack();
             }
         }
     }

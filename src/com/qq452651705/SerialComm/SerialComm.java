@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
 
+/**
+ *   串口类
+ */
 public class SerialComm {
 
     private static SerialComm serialComm=new SerialComm();

@@ -289,7 +289,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="SinkNode"/>
+                          <text value="Sink节点"/>
                         </properties>
                       </component>
                       <component id="b3fe0" class="javax.swing.JComboBox" binding="SinkNodeCombo">
@@ -303,7 +303,7 @@
                           <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="Node"/>
+                          <text value="传感器"/>
                         </properties>
                       </component>
                       <component id="c3507" class="javax.swing.JComboBox" binding="NodeCombo">
