@@ -2,16 +2,12 @@ package com.qq452651705.JDBC;
 
 import com.qq452651705.JDBC.Exception.MySQLException;
 import com.mysql.jdbc.Connection;
-import com.sun.javafx.binding.StringFormatter;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.System.out;
 
 /**
  * The type My database.  数据库服务类,实现数据库的底层操作
@@ -42,7 +38,7 @@ public class MyDatabase {
     /**
      * The constant TYPE_DATETIME.
      */
-    public static final String TYPE_DATETIME="DATETIME";
+    public static final String TYPE_DATETIME = "DATETIME";
     /**
      * The constant TYPE_TIMESTAMP.
      */
@@ -55,49 +51,54 @@ public class MyDatabase {
     /***************************数据类型********************************/
 
     /**
-     *  @param db 数据库名称
+     * @param db 数据库名称
      */
     private static String db = "wsn";
 
     /**
-     *  @param url 数据库url
+     * @param url 数据库url
      */
     private static String url = "jdbc:mysql://localhost:3306/";
 
     /**
-     *  @param usrname 数据库用户名
+     * @param usrname 数据库用户名
      */
     private static String usrname = "root";
 
     /**
-     *  @param password 数据库密码
+     * @param pwrd 数据库密码
      */
-    private static String password = "ABC123";
+    private static String pwrd = "ABC";
 
 
     /**
-     *  Load database. 数据库加载
+     * Load database. 数据库加载
      */
-    static {
+
+    public static void loadMySQL() throws SQLException, ClassNotFoundException {
+        Connection conn;
+        Class.forName("org.gjt.mm.mysql.Driver");
+        System.out.println("成功加载驱动");
+        conn = (Connection) DriverManager.getConnection(url + "mysql" + "?useSSL=false", usrname, pwrd);
         try {
-            Class.forName("org.gjt.mm.mysql.Driver");
-            System.out.println("成功加载驱动");
-            Connection conn = (Connection) DriverManager.getConnection(url + "mysql" + "?useSSL=false", usrname, password);
             Statement statement = conn.createStatement();
             statement.execute("create database " + db);
             statement.execute("set global character_set_database=utf8");
             statement.execute("set global character_set_server=utf8");
             statement.close();
             conn.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             System.out.println("Database " + db + " already exists...");
         }
     }
 
+    public static void configDatabase(String username,String password){
+        usrname=username;
+        pwrd=password;
+    }
 
-    private static MyDatabase myDatabase=new MyDatabase();
+
+    private static MyDatabase myDatabase = new MyDatabase();
 
     private MyDatabase() {}
 
@@ -106,18 +107,25 @@ public class MyDatabase {
      *
      * @return the my database
      */
-    public static MyDatabase getMyDatabase(){
+    public static MyDatabase getMyDatabase() {
+        try {
+            loadMySQL();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return myDatabase;
     }
 
 
     /**
-     *  @param conn 数据库连接
+     * @param conn 数据库连接
      */
     private Connection conn;
 
     /**
-     *  @param ps   预处理sql语句
+     * @param ps   预处理sql语句
      */
     private PreparedStatement ps;
 
@@ -128,8 +136,8 @@ public class MyDatabase {
      * @param date the date
      * @return the string
      */
-    public static String dateTimeFormmatter(java.util.Date date){
-       return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+    public static String dateTimeFormmatter(java.util.Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
     /**
@@ -138,8 +146,8 @@ public class MyDatabase {
      * @param timestamp the timestamp
      * @return the string
      */
-    public static String timestampFormmatter(Timestamp timestamp){
-        if(timestamp==null)
+    public static String timestampFormmatter(Timestamp timestamp) {
+        if (timestamp == null)
             return "";
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(timestamp.getTime()));
     }
@@ -147,11 +155,12 @@ public class MyDatabase {
 
     /**
      * Get database connection. 建立数据库连接
+     *
      * @return
      * @throws SQLException
      */
     private Connection getConnection() throws SQLException {
-        return (Connection) DriverManager.getConnection(url + db + "?useSSL=false", usrname, password);
+        return (Connection) DriverManager.getConnection(url + db + "?useSSL=false", usrname, pwrd);
     }
 
     /**
@@ -224,17 +233,17 @@ public class MyDatabase {
         for (Map.Entry<String, String> entry : name_type_map.entrySet()) {
             stringBuffer.append(entry.getKey() + " ")
                     .append(entry.getValue() + " ");
-            if(entry.getKey().equals(AUTO_INCREMENT)){
+            if (entry.getKey().equals(AUTO_INCREMENT)) {
                 stringBuffer.append("AUTO_INCREMENT");
             }
             stringBuffer.append(",");
         }
-        if(PrimaryKey!=null) {
+        if (PrimaryKey != null) {
             stringBuffer.append("PRIMARY KEY(");
             for (String s : PrimaryKey) {
-                stringBuffer.append(s+",");
+                stringBuffer.append(s + ",");
             }
-            stringBuffer.deleteCharAt(stringBuffer.length()-1);
+            stringBuffer.deleteCharAt(stringBuffer.length() - 1);
             stringBuffer.append("),");
         }
         stringBuffer.deleteCharAt(stringBuffer.length() - 1);
@@ -245,7 +254,7 @@ public class MyDatabase {
             ps.close();
             conn.close();
         } catch (SQLException e) {
-            throw new MySQLException(MySQLException.TB_OPEN_FAIL, "Failed to create " + tbName+".Possibly already existed.");
+            throw new MySQLException(MySQLException.TB_OPEN_FAIL, "Failed to create " + tbName + ".Possibly already existed.");
         }
     }
 
@@ -294,10 +303,10 @@ public class MyDatabase {
             int j = 1;
             for (Object val : vals) {
                 String val_s;
-                if(val==null){
-                    val_s="";
-                }else{
-                    val_s=val.toString();
+                if (val == null) {
+                    val_s = "";
+                } else {
+                    val_s = val.toString();
                 }
                 ps.setString(j, val_s);
                 j++;
@@ -336,10 +345,10 @@ public class MyDatabase {
             int j = 1;
             for (Object val : vals) {
                 String val_s;
-                if(val==null){
-                    val_s="";
-                }else{
-                    val_s=val.toString();
+                if (val == null) {
+                    val_s = "";
+                } else {
+                    val_s = val.toString();
                 }
                 ps.setString(j, val_s);
                 j++;
@@ -380,8 +389,8 @@ public class MyDatabase {
      * @param tbName the tb name  表名
      * @throws MySQLException the my sql exception
      */
-    public void clearTable(String tbName)throws MySQLException{
-        String sql="delete from "+tbName;
+    public void clearTable(String tbName) throws MySQLException {
+        String sql = "delete from " + tbName;
         try {
             conn = getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -402,36 +411,35 @@ public class MyDatabase {
      * @return the result set       返回结果集
      * @throws MySQLException the my sql exception
      */
-    public ResultSet query(String sql, List<Object> holders) throws MySQLException{
-          try {
-              conn = getConnection();
-              ps = conn.prepareStatement(sql);
-            int n=1;
-            if(holders!=null) {
+    public ResultSet query(String sql, List<Object> holders) throws MySQLException {
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement(sql);
+            int n = 1;
+            if (holders != null) {
                 for (Object holder : holders) {
                     ps.setObject(n, holder);
                     n++;
                 }
             }
-            ResultSet resultSet= ps.executeQuery();
+            ResultSet resultSet = ps.executeQuery();
             return resultSet;
         } catch (SQLException e) {
             e.printStackTrace();
-              throw new MySQLException(MySQLException.TB_QUERY_FAIL, "Failed to execute query:" + sql );
+            throw new MySQLException(MySQLException.TB_QUERY_FAIL, "Failed to execute query:" + sql);
         }
 
     }
 
     /**
      * Close.   query方法不会自动关闭数据库,务必在操作完resultset后调用resultset.close()和myDatabase.close()两句话关闭.
-     *
      */
-    public void close(){
+    public void close() {
         try {
             ps.close();
             conn.close();
-            ps=null;
-            conn=null;
+            ps = null;
+            conn = null;
         } catch (SQLException e) {
             e.printStackTrace();
         }
